@@ -74,6 +74,30 @@ get_model_by_mid(int mid) {
 	return ptrModel;
 }
 
+
+
+ /* ----------------
+  *      Variable-length datatypes all share the 'struct varlena' header.
+  *
+  * NOTE: for TOASTable types, this is an oversimplification, since the value
+  * may be compressed or moved out-of-line.  However datatype-specific routines
+  * are mostly content to deal with de-TOASTed values only, and of course
+  * client-side routines should never see a TOASTed value.  But even in a
+  * de-TOASTed value, beware of touching vl_len_ directly, as its
+  * representation is no longer convenient.  It's recommended that code always
+  * use macros VARDATA_ANY, VARSIZE_ANY, VARSIZE_ANY_EXHDR, VARDATA, VARSIZE,
+  * and SET_VARSIZE instead of relying on direct mentions of the struct fields.
+  * See postgres.h for details of the TOASTed form.
+  * ----------------
+
+   struct varlena
+ {
+     char        vl_len_[4];        Do not touch this field directly! 
+     char        vl_dat[FLEXIBLE_ARRAY_MEMBER];      Data content is here 
+ };
+ */
+
+
 /**
  * parse the array by NO PALLOC?
  *
@@ -84,6 +108,7 @@ get_model_by_mid(int mid) {
  * return:
  *   int, length of the array, # of elements
  */
+
 inline int 
 my_parse_array_no_copy(struct varlena* input, int typesize, char** output) {
 	//elog(WARNING, "Inside loss(), for v, ISEXTERNAL %d, ISCOMPR %d, ISHORT %d, varsize_short %d", VARATT_IS_EXTERNAL(v2) ? 1 : 0, VARATT_IS_COMPRESSED(v2)  ? 1 : 0, VARATT_IS_SHORT(v2)  ? 1 : 0, VARSIZE_SHORT(v2));

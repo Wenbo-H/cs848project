@@ -23,7 +23,8 @@ CREATE TABLE linear_model (
 	mu				double precision,
 	stepsize		double precision,
 	decay			double precision,
-	w				double precision [])
+	w				double precision [],
+	temp_v			double precision [])
 --DISTRIBUTED BY (mid);
 ;
 

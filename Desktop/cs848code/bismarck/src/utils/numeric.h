@@ -22,10 +22,11 @@ limitations under the License.
 #include <string.h>
 #include <arpa/inet.h>
 #include <time.h>
-#include <stdio.h>
+
 /**
  * function definitions
  */
+
 inline void
 ball_project(double*  x, const int size, const double B, const double B2) {
 	double norm_square = 0.0;
@@ -40,6 +41,41 @@ ball_project(double*  x, const int size, const double B, const double B2) {
 			x[j] *= B / norm;
 		}
 	}
+}
+
+
+inline void 
+add_vectors(double *x, double *y, const int n){
+  int i;
+  for(i = n; i >= 0; i--){
+    x[i] = x[i] + y[i];
+  }
+}
+
+
+inline void 
+add_vector_dss(double *x, const int *k, double *temp, const int sparseSize){
+  int i;
+  for(i = sparseSize-1; i>=0; i--){
+    x[k[i]] = x[k[i]] + temp[k[i]];
+  }
+}
+
+inline void 
+scale_dot(double *x, int scalor, const int n){
+  int i;
+  for(i = n-1; i>=0; i--){
+    x[i] = x[i] * scalor;
+  }
+
+}
+
+inline void
+scale_dot_dss(double *x, const int *k, int scalor, const int sparseSize){
+  int i;
+  for(i = sparseSize -1; i >= 0; i--){
+    x[k[i]] = x[k[i]] * scalor;
+  }
 }
 
 inline double

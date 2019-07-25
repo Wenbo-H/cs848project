@@ -35,6 +35,7 @@ struct LinearModel {
 	double decay;
 	// weight vector
 	double *w;
+	double *temp_v;  
 };
 
 /**
@@ -61,7 +62,9 @@ LinearModel_init(struct LinearModel *ptrModel, int mid, int nDims, int nTuples,
     ptrModel->decay = decay;
 
 	// weight vector
-	ptrModel->w = (double *)(&(ptrModel->w) + 1);
+	ptrModel->w = (double *)(&(ptrModel->w) + 1);  // ?????
+	// ? temp_v value
+	ptrModel->temp_v = (double *)(&(ptrModel->temp_v) + 1)
 }
 
 /**
