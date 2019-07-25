@@ -64,7 +64,7 @@ LinearModel_init(struct LinearModel *ptrModel, int mid, int nDims, int nTuples,
 	// weight vector
 	ptrModel->w = (double *)(&(ptrModel->w) + 1);  // ?????
 	// ? temp_v value
-	ptrModel->temp_v = (double *)(&(ptrModel->temp_v) + 1)
+	ptrModel->temp_v = (double *)(&(ptrModel->temp_v) + 1);
 }
 
 /**
