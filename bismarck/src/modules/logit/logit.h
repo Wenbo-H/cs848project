@@ -26,7 +26,7 @@ sparse_logit_grad(struct LinearModel *ptrModel, const int len, const int *k, con
     double *temp;
     memcpy(temp, v, ptrModel->nDims * sizeof(float8)); 
     scale_dot_dss(temp, k, y*sig, len);
-    scale_dot_dss(temp, k, -0.1, len);
+    scale_dot_dss(temp, k, 0.1, len);
     add_vector_dss(ptrModel->temp_v, k, temp, len);
     add_and_scale_dss(ptrModel->w, k, ptrModel->temp_v, len, -1*ptrModel->stepsize);
 
@@ -46,8 +46,8 @@ dense_logit_grad(struct LinearModel *ptrModel, const double *v, const int y) {
     double sig = sigma(-wx * y);
     //double c = ptrModel->stepsize * y * sig; // scale factor
     //add_and_scale(ptrModel->w, ptrModel->nDims, v, c);
-    double *temp;
-    memcpy(temp, v, ptrModel->nDims * sizeof(float8));   // v is feature value, not v_dw
+    double temp[ptrModel->nDims];
+    memcpy(&temp, v, ptrModel->nDims * sizeof(float8));   // v is feature value, not v_dw
     scale_dot(temp, y*sig, ptrModel->nDims); 
     scale_dot(temp, -0.1, ptrModel->nDims);
     add_vectors(ptrModel->temp_v, temp, ptrModel->nDims);

@@ -111,39 +111,16 @@ get_model_by_mid(int mid) {
 
 inline int 
 my_parse_array_no_copy(struct varlena* input, int typesize, char** output) {
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "call my parse array no copy: typesize %d, VARHDRSZ %d ARRAY_HEAD_SIZE %d\n", typesize, VARHDRSZ, ARRAY_HEAD_SIZE)));
-    
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "VARATT_IS_EXTERNAL: %d\n", VARATT_IS_EXTERNAL(input))));
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "VARATT_IS_COMPRESSED: %d\n", VARATT_IS_COMPRESSED(input))));
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "VARSIZE_SHORT: %d\n", VARSIZE_SHORT(input))));
-	//elog(WARNING, "Inside loss(), for v, ISEXTERNAL %d, ISCOMPR %d, ISHORT %d, varsize_short %d", VARATT_IS_EXTERNAL(v2) ? 1 : 0, VARATT_IS_COMPRESSED(v2)  ? 1 : 0, VARATT_IS_SHORT(v2)  ? 1 : 0, VARSIZE_SHORT(v2));
+//	//elog(WARNING, "Inside loss(), for v, ISEXTERNAL %d, ISCOMPR %d, ISHORT %d, varsize_short %d", VARATT_IS_EXTERNAL(v2) ? 1 : 0, VARATT_IS_COMPRESSED(v2)  ? 1 : 0, VARATT_IS_SHORT(v2)  ? 1 : 0, VARSIZE_SHORT(v2));
 	if (VARATT_IS_EXTERNAL(input) || VARATT_IS_COMPRESSED(input)) {
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "here 1")));
-         
 		// if compressed, palloc is necessary
 		input = heap_tuple_untoast_attr(input);
         *output = VARDATA(input) + ARRAY_HEAD_SIZE;
         return (VARSIZE(input) - VARHDRSZ - ARRAY_HEAD_SIZE) / typesize;
 	} else if (VARATT_IS_SHORT(input)) {
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "here 2")));
         *output = VARDATA_SHORT(input) + ARRAY_HEAD_SIZE;
         return (VARSIZE_SHORT(input) - VARHDRSZ_SHORT - ARRAY_HEAD_SIZE) / typesize;
     } else {
-    ereport( INFO,
-            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
-              errmsg( "here 3")));
         *output = VARDATA(input) + ARRAY_HEAD_SIZE;
         return (VARSIZE(input) - VARHDRSZ - ARRAY_HEAD_SIZE) / typesize;
     }

@@ -247,6 +247,7 @@ BEGIN
 	EXECUTE 'SELECT count(*) FROM ' || data_table
 		INTO ntuples;	
 	SELECT alloc_float8_array(ndims) INTO initw;
+    SELECT alloc_float8_array(ndims) INTO initv;
 	DELETE FROM linear_model WHERE mid = model_id;
 	INSERT INTO linear_model VALUES (model_id, ndims, ntuples, mu, stepsize, decay, initw, initv); 
 	-- execute iterations
