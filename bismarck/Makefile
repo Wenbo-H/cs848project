@@ -1,4 +1,4 @@
-MODULES := crf logit svm factor linear array
+MODULES := crf logit svm factor linear array linear_regression
 PGPORTDIR := src/ports/postgres/
 MODULEDIRS := $(addprefix $(PGPORTDIR),$(MODULES))
 PGMODULES := $(MODULEDIRS:%=%-pg)
