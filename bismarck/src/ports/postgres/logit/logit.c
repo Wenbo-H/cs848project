@@ -32,6 +32,9 @@ PG_FUNCTION_INFO_V1(pred);
  */
 Datum
 init(PG_FUNCTION_ARGS) {
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "call init\n")));
     // -------------------------------------------------------------------
     // 0. parse lmf_model row type into local variables
     // -------------------------------------------------------------------
@@ -49,13 +52,25 @@ init(PG_FUNCTION_ARGS) {
     double *w;
     int wLen = my_parse_array_no_copy((struct varlena*) warray, 
             sizeof(float8), (char **) &w);
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "here!!!!!!!!!!!! isnull %d\n", isnull)));
 
     // temp_v vector ?????
-    ArrayType *varray = (ArrayType *) GetAttributeByNum(modelTuple, 8, &isnull);
+    ArrayType *varray = (ArrayType *)GetAttributeByNum(modelTuple, 8, &isnull);
+    //int haibo = DatumGetInt32(GetAttributeByNum(modelTuple, 8, &isnull));
+    
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "here222222222222 isnull %d\n", isnull)));
+
     double *temp_v;
     int vLen = my_parse_array_no_copy((struct varlena*) varray, 
             sizeof(float8), (char **) &temp_v); 
 
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "wlen: %d; vlen: %d\n", wLen, vLen )));
     // dimension sanity check
     assert(wLen == ndims);
     assert(vLen == ndims);
@@ -67,6 +82,8 @@ init(PG_FUNCTION_ARGS) {
     double *wp;
     ArrayType *wparray = my_construct_array(wLen + vLen + META_LEN, sizeof(float8),
             FLOAT8OID);
+    //ArrayType *wparray = my_construct_array(wLen + META_LEN, sizeof(float8),
+      //      FLOAT8OID);
     int wpLen = my_parse_array_no_copy((struct varlena *) wparray, 
             sizeof(float8), (char **) &wp);
 
@@ -341,7 +358,7 @@ final(PG_FUNCTION_ARGS) {
         sizeof(float8), (char **)&temp_v);
 
 	memcpy(w, wp + META_LEN, (wpLen - META_LEN)/2 * sizeof(float8));
-    memcpy(temp_v, wp + META_LEN + wLen, vLen * sizeof(float8));
+    memcpy(temp_v, wp + META_LEN + wLen, (wpLen - META_LEN)/2 * sizeof(float8));
 #else
     //--------------------------------------------------------------------
     // 1. get model from shared memory

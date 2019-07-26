@@ -17,7 +17,7 @@ limitations under the License.
 #ifndef LINEAR_MODEL_H
 #define LINEAR_MODEL_H
 
-#define META_LEN (7)
+#define META_LEN (9)
 
 /** a structure for model parameters and meta data */
 struct LinearModel {

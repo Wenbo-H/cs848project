@@ -47,7 +47,7 @@ ball_project(double*  x, const int size, const double B, const double B2) {
 inline void 
 add_vectors(double *x, double *y, const int n){
   int i;
-  for(i = n; i >= 0; i--){
+  for(i = n - 1; i >= 0; i--){
     x[i] = x[i] + y[i];
   }
 }
