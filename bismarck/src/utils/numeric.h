@@ -62,6 +62,23 @@ add_vector_dss(double *x, const int *k, double *temp, const int sparseSize){
 }
 
 inline void 
+minus_vectors(double *x, double *y, const int n){
+  int i;
+  for(i = n-1; i > 0; i--){
+    x[i] = x[i] - y[i];
+  }
+}
+
+
+inline void
+minus_vectors_dss(double *x, const int *k, double *temp, const int sparseSize){
+  int i;
+  for(i = sparseSize-1; i>=0; i--){
+    x[k[i]] = x[k[i]] - temp[k[i]];
+  }
+}
+
+inline void 
 scale_dot(double *x, int scalor, const int n){
   int i;
   for(i = n-1; i>=0; i--){
