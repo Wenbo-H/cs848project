@@ -241,13 +241,14 @@ DECLARE
 	ntuples integer;
 	tmp_table text;
 	initw double precision[] := '{0}';
+    initv double precision[] := '{0}';
 BEGIN
 	-- query for ntuples and initialize the model table 
 	EXECUTE 'SELECT count(*) FROM ' || data_table
 		INTO ntuples;	
 	SELECT alloc_float8_array(ndims) INTO initw;
 	DELETE FROM linear_model WHERE mid = model_id;
-	INSERT INTO linear_model VALUES (model_id, ndims, ntuples, mu, stepsize, decay, initw); 
+	INSERT INTO linear_model VALUES (model_id, ndims, ntuples, mu, stepsize, decay, initw, initv); 
 	-- execute iterations
 	IF is_shuffle THEN
 		tmp_table := '__bismarck_shuffled_' || data_table || '_' || model_id;

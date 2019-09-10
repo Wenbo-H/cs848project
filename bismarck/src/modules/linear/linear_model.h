@@ -17,7 +17,7 @@ limitations under the License.
 #ifndef LINEAR_MODEL_H
 #define LINEAR_MODEL_H
 
-#define META_LEN (7)
+#define META_LEN (9)
 
 /** a structure for model parameters and meta data */
 struct LinearModel {
@@ -64,7 +64,7 @@ LinearModel_init(struct LinearModel *ptrModel, int mid, int nDims, int nTuples,
 	// weight vector
 	ptrModel->w = (double *)(&(ptrModel->w) + 1);  // ?????
 	// ? temp_v value
-	ptrModel->temp_v = (double *)(&(ptrModel->temp_v) + 1)
+	ptrModel->temp_v = (double *)(&(ptrModel->temp_v) + 1);
 }
 
 /**

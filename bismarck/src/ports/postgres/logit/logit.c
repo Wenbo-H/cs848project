@@ -32,6 +32,9 @@ PG_FUNCTION_INFO_V1(pred);
  */
 Datum
 init(PG_FUNCTION_ARGS) {
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "call init\n")));
     // -------------------------------------------------------------------
     // 0. parse lmf_model row type into local variables
     // -------------------------------------------------------------------
@@ -49,13 +52,25 @@ init(PG_FUNCTION_ARGS) {
     double *w;
     int wLen = my_parse_array_no_copy((struct varlena*) warray, 
             sizeof(float8), (char **) &w);
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "here!!!!!!!!!!!! isnull %d\n", isnull)));
 
     // temp_v vector ?????
-    ArrayType *varray = (ArrayType *) GetAttributeByNum(modelTuple, 8, &isnull);
+    ArrayType *varray = (ArrayType *)GetAttributeByNum(modelTuple, 8, &isnull);
+    //int haibo = DatumGetInt32(GetAttributeByNum(modelTuple, 8, &isnull));
+    
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "here222222222222 isnull %d\n", isnull)));
+
     double *temp_v;
     int vLen = my_parse_array_no_copy((struct varlena*) varray, 
             sizeof(float8), (char **) &temp_v); 
 
+    ereport( INFO,
+            ( errcode( ERRCODE_SUCCESSFUL_COMPLETION ),
+              errmsg( "wlen: %d; vlen: %d\n", wLen, vLen )));
     // dimension sanity check
     assert(wLen == ndims);
     assert(vLen == ndims);
@@ -67,6 +82,8 @@ init(PG_FUNCTION_ARGS) {
     double *wp;
     ArrayType *wparray = my_construct_array(wLen + vLen + META_LEN, sizeof(float8),
             FLOAT8OID);
+    //ArrayType *wparray = my_construct_array(wLen + META_LEN, sizeof(float8),
+      //      FLOAT8OID);
     int wpLen = my_parse_array_no_copy((struct varlena *) wparray, 
             sizeof(float8), (char **) &wp);
 
@@ -165,7 +182,7 @@ grad(PG_FUNCTION_ARGS) {
             wp[3], wp[4], wp[5]);
 	// point to the weight vector and update in place
     ptrModel->w = wp + META_LEN;
-    wLen = (wpLen - META_LEN)/2;
+    int wLen = (wpLen - META_LEN)/2;
     ptrModel->temp_v = wp + META_LEN + wLen;
     // count
     wp[6] ++;
@@ -186,7 +203,7 @@ grad(PG_FUNCTION_ARGS) {
     }
 	*ptrModel = (*ptrSharedModel);
 	ptrModel->w = (double *)(&(ptrSharedModel->w) + 1);
-    ptrModel->temp_v = (double *)(&(ptrSharedModel->temp_v) + 1)
+    ptrModel->temp_v = (double *)(&(ptrSharedModel->temp_v) + 1);
 #endif
 
     //--------------------------------------------------------------------
@@ -279,7 +296,7 @@ pre(PG_FUNCTION_ARGS) {
     // elog(WARNING, "inside pre 4");
     // elog(WARNING, "count0: %d, count1: %d", count0, count1);
     int count = count0 + count1;
-    vLen = (wpLen - META_LEN)/2;
+    int vLen = (wpLen - META_LEN)/2;
     // add 1 to 0 in place
     int i;
     for (i = META_LEN; i < wpLen - vLen; i ++) {
@@ -317,7 +334,7 @@ final(PG_FUNCTION_ARGS) {
     int wLen;
     double *temp_v;
     int vLen; 
-#ifdef VAGG?
+#ifdef VAGG
     //--------------------------------------------------------------------
     // 1. cut the last count and return the state
     //--------------------------------------------------------------------
@@ -334,14 +351,14 @@ final(PG_FUNCTION_ARGS) {
     // 2. get rid of count when outputing
     //--------------------------------------------------------------------
 	warray = my_construct_array((wpLen - META_LEN)/2, sizeof(float8), FLOAT8OID);
-    varray = my_construct_array((vpLen - META_LEN)/2, sizeof(float8), FLOAT8OID);
+    ArrayType *varray = my_construct_array((wpLen - META_LEN)/2, sizeof(float8), FLOAT8OID);
 	wLen = my_parse_array_no_copy((struct varlena *)warray, 
 			sizeof(float8), (char **)&w);
     vLen = my_parse_array_no_copy((struct varlena *)varray, 
         sizeof(float8), (char **)&temp_v);
 
 	memcpy(w, wp + META_LEN, (wpLen - META_LEN)/2 * sizeof(float8));
-    memcpy(temp_v, wp + META_LEN + wLen, vLen * sizeof(float8));
+    memcpy(temp_v, wp + META_LEN + wLen, (wpLen - META_LEN)/2 * sizeof(float8));
 #else
     //--------------------------------------------------------------------
     // 1. get model from shared memory
@@ -360,7 +377,7 @@ final(PG_FUNCTION_ARGS) {
 	memcpy(w, &(ptrSharedModel->w) + 1, wLen * sizeof(float8));
 
     vLen = ptrSharedModel->nDims;
-    varray = my_construct_array(vLen, sizeof(float8), FLOAT8OID);
+    ArrayType *varray = my_construct_array(vLen, sizeof(float8), FLOAT8OID);
     vLen = my_parse_array_no_copy((struct varlena *)varray, 
             sizeof(float8), (char **)&temp_v);
     memcpy(temp_v, &(ptrSharedModel->temp_v) + 1, vLen * sizeof(float8));
@@ -398,7 +415,7 @@ loss(PG_FUNCTION_ARGS) {
     LinearModel_init(ptrModel, (int) wp[0], (int) wp[1], (int) wp[2], 
             wp[3], wp[4], wp[5]);
 	// point to the weight vector
-    wLen = (wpLen - META_LEN)/2;
+    int wLen = (wpLen - META_LEN)/2;
     ptrModel->w = wp + META_LEN;
     ptrModel->temp_v = wp + META_LEN + wLen;
     // count
@@ -489,7 +506,7 @@ pred(PG_FUNCTION_ARGS) {
             wp[3], wp[4], wp[5]);
 	// point to the weight vector
 
-    wLen = (wpLen - META_LEN)/2;
+    int wLen = (wpLen - META_LEN)/2;
 
     ptrModel->w = wp + META_LEN;
     ptrModel->temp_v = wp + META_LEN + wLen;
@@ -511,7 +528,7 @@ pred(PG_FUNCTION_ARGS) {
         // elog(WARNING, "grad: NO");
     }
 	*ptrModel = (*ptrSharedModel);
-	ptrModel->w = (double *) (&(ptrSharedModel->w) + 1
+	ptrModel->w = (double *) (&(ptrSharedModel->w) + 1);
     ptrModel->temp_v = (double *) (&(ptrSharedModel->temp_v) + 1);
     #endif //We always read the model into shmem for prediction
 
